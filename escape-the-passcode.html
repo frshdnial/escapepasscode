@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escape the Passcode — PERSAKA 26/27</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#14161c;
+    --bg-panel:#1b1e26;
+    --paper:#ece2c8;
+    --paper-dark:#ddcfa9;
+    --paper-edge:#c9b985;
+    --ink:#241f18;
+    --ink-soft:#4a4436;
+    --red:#a3362b;
+    --red-dark:#7c281f;
+    --brass:#b9924f;
+    --parchment-muted:#a49c88;
+    --line:#33384a;
+    --success:#3f6b4a;
+    --success-dark:#2b4a34;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:var(--bg-deep);
+    color:var(--parchment-muted);
+    font-family:'Courier Prime', ui-monospace, monospace;
+  }
+
+  body{
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(185,146,79,0.06), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(163,54,43,0.07), transparent 45%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 48px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 48px);
+    padding:0 0 60px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  a{color:inherit;}
+
+  /* ---------- Bureau bar ---------- */
+  .bureau-bar{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:18px clamp(16px,4vw,48px);
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, #191c24, #14161c);
+  }
+
+  .badge-mark{width:34px;height:34px;flex:none;}
+  .badge-mark svg{width:100%;height:100%;}
+
+  .wordmark{
+    font-family:'Special Elite', 'Courier Prime', monospace;
+    font-size:15px;
+    letter-spacing:0.06em;
+    color:var(--brass);
+    white-space:nowrap;
+  }
+  .wordmark small{
+    display:block;
+    font-family:'Courier Prime', monospace;
+    font-size:10px;
+    color:var(--parchment-muted);
+    letter-spacing:0.14em;
+    margin-top:1px;
+  }
+
+  .tabs{
+    display:flex;
+    gap:8px;
+    margin-left:auto;
+    flex-wrap:wrap;
+  }
+
+  .tab{
+    position:relative;
+    padding:6px 10px 6px 9px;
+    border:1px solid var(--line);
+    border-radius:2px 6px 2px 2px;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:#6d7285;
+    background:#1e222c;
+  }
+  .tab .n{font-family:'Special Elite',monospace; margin-right:4px;}
+  .tab.solved{color:var(--success); border-color:#2c4433; background:#1a221c;}
+  .tab.current{color:var(--paper); border-color:var(--brass); background:#2a2415; box-shadow:0 0 0 1px rgba(185,146,79,0.25);}
+  .tab.locked{opacity:0.45;}
+
+  /* ---------- Layout ---------- */
+  main{
+    max-width:760px;
+    margin:0 auto;
+    padding:clamp(28px,6vw,64px) clamp(16px,5vw,24px) 0;
+  }
+
+  .panel{animation:fadeIn 0.5s ease;}
+  .panel.hidden{display:none;}
+
+  @keyframes fadeIn{
+    from{opacity:0; transform:translateY(6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* ---------- Intro ---------- */
+  #intro{text-align:center; padding-top:6vh;}
+
+  .eyebrow-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:26px;
+  }
+  .eyebrow-badge .line{width:36px; height:1px; background:var(--line);}
+
+  .stamp-title{
+    font-family:'Special Elite', monospace;
+    font-size:clamp(34px,7vw,54px);
+    color:var(--paper);
+    letter-spacing:0.03em;
+    line-height:1.1;
+    margin:0 0 18px;
+    text-shadow:0 0 18px rgba(0,0,0,0.4);
+  }
+
+  .briefing{
+    max-width:480px;
+    margin:0 auto 34px;
+    font-size:14px;
+    line-height:1.8;
+    color:#8d8672;
+  }
+
+  .briefing strong{color:var(--paper);}
+
+  .rules{
+    max-width:460px;
+    margin:0 auto 40px;
+    text-align:left;
+    border:1px solid var(--line);
+    border-left:3px solid var(--red);
+    padding:18px 20px;
+    background:#181b23;
+    font-size:12.5px;
+    line-height:2;
+    color:#9a927c;
+  }
+  .rules b{color:var(--paper); font-weight:400; font-family:'Special Elite',monospace; letter-spacing:0.03em;}
+
+  /* ---------- Buttons ---------- */
+  .btn-primary{
+    font-family:'Special Elite', monospace;
+    font-size:14px;
+    letter-spacing:0.05em;
+    color:var(--bg-deep);
+    background:var(--brass);
+    border:none;
+    padding:14px 30px;
+    cursor:pointer;
+    border-radius:2px;
+    box-shadow:0 3px 0 var(--red-dark);
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-primary:active{transform:translateY(2px); box-shadow:0 1px 0 var(--red-dark);}
+  .btn-primary:focus-visible{outline:2px solid var(--paper); outline-offset:3px;}
+  .btn-primary:disabled{opacity:0.4; cursor:default; box-shadow:none;}
+
+  .btn-ghost{
+    font-family:'Courier Prime', monospace;
+    font-size:12px;
+    color:var(--parchment-muted);
+    background:none;
+    border:1px solid var(--line);
+    padding:9px 16px;
+    cursor:pointer;
+    border-radius:2px;
+  }
+  .btn-ghost:hover{border-color:var(--brass); color:var(--paper);}
+  .btn-ghost:focus-visible{outline:2px solid var(--paper); outline-offset:2px;}
+
+  /* ---------- Case card ---------- */
+  .case-card{
+    position:relative;
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:2px;
+    padding:clamp(24px,5vw,42px) clamp(20px,5vw,44px) 36px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.45), 0 2px 0 var(--paper-edge) inset;
+    transform:rotate(-0.4deg);
+  }
+
+  .case-card.shake{animation:shake 0.4s ease;}
+  @keyframes shake{
+    10%,90%{transform:rotate(-0.4deg) translateX(-1px);}
+    20%,80%{transform:rotate(-0.4deg) translateX(2px);}
+    30%,50%,70%{transform:rotate(-0.4deg) translateX(-5px);}
+    40%,60%{transform:rotate(-0.4deg) translateX(5px);}
+  }
+
+  .pin{
+    position:absolute;
+    top:-9px; left:34px;
+    width:16px; height:16px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #d8544a, var(--red-dark));
+    box-shadow:0 3px 4px rgba(0,0,0,0.5);
+  }
+
+  .case-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:16px;
+    margin-bottom:20px;
+  }
+
+  .case-number-stamp{
+    font-family:'Special Elite', monospace;
+    font-size:13px;
+    letter-spacing:0.1em;
+    color:var(--red);
+    border:2px solid var(--red);
+    padding:4px 10px;
+    display:inline-block;
+    transform:rotate(-3deg);
+    border-radius:2px;
+    white-space:nowrap;
+  }
+
+  .case-heading h2{
+    font-family:'Special Elite', monospace;
+    font-size:clamp(19px,3.2vw,25px);
+    margin:0 0 4px;
+    letter-spacing:0.01em;
+  }
+
+  .rank-tag{
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+  }
+  .rank-tag::before{content:"RANK — ";}
+
+  .timer-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:flex-end;
+    gap:10px;
+    margin:-6px 0 18px;
+  }
+  .timer-label{
+    font-size:10px;
+    letter-spacing:0.12em;
+    color:var(--ink-soft);
+  }
+  .timer-clock{
+    font-family:'Special Elite', monospace;
+    font-size:20px;
+    letter-spacing:0.04em;
+    color:var(--ink);
+    background:#dfd3ae;
+    border:1px solid var(--paper-edge);
+    padding:2px 10px;
+    border-radius:2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .timer-clock.low{
+    color:var(--red);
+    border-color:var(--red);
+    background:#f1d9d3;
+    animation:pulseLow 1s ease infinite;
+  }
+  @keyframes pulseLow{
+    0%,100%{opacity:1;}
+    50%{opacity:0.55;}
+  }
+  .timer-clock.stopped{
+    color:var(--success);
+    border-color:var(--success);
+    background:#dcead9;
+    animation:none;
+  }
+
+  .briefing-note{
+    font-size:12.5px;
+    font-style:italic;
+    line-height:1.7;
+    color:var(--ink-soft);
+    margin:0 0 24px;
+    border-left:2px solid var(--paper-edge);
+    padding-left:14px;
+  }
+
+  .clues{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin-bottom:30px;
+  }
+
+  .clue{
+    display:flex;
+    gap:14px;
+    padding:14px 16px;
+    background:#f4ecd8;
+    border:1px solid var(--paper-edge);
+    border-radius:2px;
+    position:relative;
+  }
+
+  .clue-index{
+    font-family:'Special Elite', monospace;
+    font-size:20px;
+    color:var(--red);
+    flex:none;
+    width:26px;
+    line-height:1;
+    padding-top:2px;
+  }
+
+  .clue-text{font-size:13.5px; line-height:1.65;}
+  .clue-text .tag{
+    display:block;
+    font-size:10px;
+    letter-spacing:0.1em;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+
+  /* ---------- Lock ---------- */
+  .lock{
+    border-top:1px dashed var(--paper-edge);
+    padding-top:24px;
+    text-align:center;
+  }
+
+  .lock-label{
+    font-size:11px;
+    letter-spacing:0.12em;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+
+  .digit-boxes{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+
+  .digit{
+    width:52px;
+    height:60px;
+    text-align:center;
+    font-family:'Special Elite', monospace;
+    font-size:26px;
+    background:#fff9ea;
+    border:2px solid var(--ink);
+    border-radius:3px;
+    color:var(--ink);
+    caret-color:var(--red);
+  }
+  .digit:focus{outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(163,54,43,0.18);}
+
+  .feedback{
+    min-height:20px;
+    font-size:12px;
+    letter-spacing:0.06em;
+    margin-top:14px;
+  }
+  .feedback.denied{color:var(--red);}
+  .feedback.granted{color:var(--success);}
+
+  .stamp-result{
+    display:inline-block;
+    margin-top:16px;
+    font-family:'Special Elite', monospace;
+    font-size:20px;
+    letter-spacing:0.08em;
+    padding:6px 16px;
+    border:3px solid var(--success);
+    color:var(--success);
+    border-radius:3px;
+    transform:rotate(-4deg);
+    opacity:0;
+  }
+  .stamp-result.show{
+    animation:stampIn 0.35s ease forwards;
+  }
+  @keyframes stampIn{
+    0%{opacity:0; transform:rotate(-4deg) scale(1.6);}
+    100%{opacity:1; transform:rotate(-4deg) scale(1);}
+  }
+
+  .stage-actions{margin-top:22px;}
+
+  /* ---------- Complete screen ---------- */
+  #complete{text-align:center; padding-top:5vh;}
+  .closed-stamps{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:26px 0 36px;
+  }
+  .closed-stamps span{
+    font-family:'Special Elite', monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    color:var(--success);
+    border:1px solid var(--success);
+    padding:6px 10px;
+    border-radius:2px;
+  }
+
+  footer{
+    text-align:center;
+    font-size:10.5px;
+    color:#4d5164;
+    letter-spacing:0.08em;
+    padding:40px 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<header class="bureau-bar">
+  <div class="badge-mark" aria-hidden="true">
+    <svg viewBox="0 0 40 40" fill="none">
+      <path d="M20 2 L36 9 V19 C36 29 29.5 35.5 20 38 C10.5 35.5 4 29 4 19 V9 Z" stroke="#b9924f" stroke-width="1.6"/>
+      <path d="M13 20.5 L18 25.5 L27.5 14.5" stroke="#a3362b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="wordmark">PERSAKA 26/27<small>Case Access Terminal</small></div>
+  <nav class="tabs" id="tabs" aria-label="Case progress"></nav>
+</header>
+
+<main>
+
+  <section id="intro" class="panel">
+    <div class="eyebrow-badge"><span class="line"></span><span class="wordmark" style="font-size:11px;">CLASSIFIED FILE</span><span class="line"></span></div>
+    <h1 class="stamp-title">Escape the<br>Passcode</h1>
+    <p class="briefing">Five sealed case files sit on your desk. Each one hides a <strong>3-digit vault combination</strong> inside a set of clues left behind by the investigating officer. Read carefully, work the numbers, and enter the code to break the seal.</p>
+    <div class="rules">
+      <b>Standard procedure</b><br>
+      1. Every case gives you 3 clues.<br>
+      2. Each clue resolves to a single digit.<br>
+      3. Enter the three digits in order to unlock the file.<br>
+      4. A wrong combination stays sealed — check your working and try again.<br>
+      5. Cases get harder as your rank rises.
+    </div>
+    <button class="btn-primary" id="startBtn">Open Case File 01</button>
+  </section>
+
+  <section id="stage" class="panel hidden">
+    <div class="case-card" id="caseCard">
+      <div class="pin" aria-hidden="true"></div>
+      <div class="case-top">
+        <div class="case-heading">
+          <h2 id="caseTitle"></h2>
+          <span class="rank-tag" id="caseRank"></span>
+        </div>
+        <div class="case-number-stamp" id="caseNumber"></div>
+      </div>
+      <div class="timer-row">
+        <span class="timer-label">TIME REMAINING</span>
+        <span class="timer-clock" id="timerClock">01:00</span>
+      </div>
+      <p class="briefing-note" id="caseNote"></p>
+
+      <div class="clues" id="clues"></div>
+
+      <div class="lock">
+        <div class="lock-label">ENTER 3-DIGIT COMBINATION</div>
+        <div class="digit-boxes" id="digitBoxes">
+          <input class="digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-i="0" aria-label="First digit">
+          <input class="digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-i="1" aria-label="Second digit">
+          <input class="digit" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" data-i="2" aria-label="Third digit">
+        </div>
+        <button class="btn-primary" id="submitBtn">Unlock File</button>
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+        <div class="stage-actions" id="stageActions" style="display:none;">
+          <button class="btn-ghost" id="nextBtn">Proceed to next case →</button>
+        </div>
+        <div class="stage-actions" id="retryActions" style="display:none;">
+          <button class="btn-ghost" id="retryBtn">Reopen case file ↻</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="complete" class="panel hidden">
+    <h1 class="stamp-title">Case<br>Closed</h1>
+    <p class="briefing">All five files are unsealed. PERSAKA 26/27 thanks you for your service, Detective — the record now shows a perfect clearance rate.</p>
+    <div class="closed-stamps" id="closedStamps"></div>
+    <button class="btn-primary" id="restartBtn">Start a New Investigation</button>
+  </section>
+
+</main>
+
+<footer>PERSAKA 26/27 &middot; INTERNAL TRAINING SIMULATION</footer>
+
+<script>
+(function(){
+  const stages = [
+    {
+      title:"The Warehouse Break-In",
+      rank:"Rookie",
+      note:"A patrol officer found this note taped inside the warehouse door. No context, just three questions.",
+      clues:[
+        {tag:"Clue 1", text:"Count the letters in the word \u201CCODE.\u201D"},
+        {tag:"Clue 2", text:"Count the colors in a rainbow."},
+        {tag:"Clue 3", text:"A clock shows 3:00. What number is the minute hand pointing to? Take the first digit of that number."}
+      ],
+      code:"471"
+    },
+    {
+      title:"The Forged Signature",
+      rank:"Junior Detective",
+      note:"The forger left a note in the margins of the contract, written like a puzzle for whoever found it first.",
+      clues:[
+        {tag:"Clue 1", text:"Count the sides of a hexagon."},
+        {tag:"Clue 2", text:"How many continents are there, by the standard seven-continent model?"},
+        {tag:"Clue 3", text:"The break-in happened on a Wednesday. Counting Monday as day 1, what number is Wednesday?"}
+      ],
+      code:"673"
+    },
+    {
+      title:"The Poisoned Wine",
+      rank:"Detective",
+      note:"A dinner party, one poisoned glass, and a cipher scratched into the tablecloth by the victim.",
+      clues:[
+        {tag:"Clue 1", text:"The Roman numeral \u201CIX\u201D stands for what number?"},
+        {tag:"Clue 2", text:"Take a dozen, then subtract half a dozen."},
+        {tag:"Clue 3", text:"The victim's watch stopped at 8:15. Add the hour (8) to the tens digit of the minutes (1)."}
+      ],
+      code:"969"
+    },
+    {
+      title:"The Bank Vault Heist",
+      rank:"Senior Investigator",
+      note:"The thieves left the vault combination scattered across three separate ransom notes — clearly enjoying themselves.",
+      clues:[
+        {tag:"Clue 1", text:"Count the letters in \u201CDETECTIVE,\u201D then subtract the number of vowels in that word."},
+        {tag:"Clue 2", text:"A witness recalls the getaway car's plate ending in an odd prime number greater than 5 and less than 10."},
+        {tag:"Clue 3", text:"The security log shows 11:50. Round to the nearest hour, then take the last digit of that hour."}
+      ],
+      code:"572"
+    },
+    {
+      title:"The Final Confrontation",
+      rank:"Master Detective",
+      note:"The suspect is cornered and taunts you with one last riddle before the confession — solve it to close the case for good.",
+      clues:[
+        {tag:"Clue 1", text:"Today is Friday. Counting Sunday as day 1, the crime happened 3 days earlier. What number is that day?"},
+        {tag:"Clue 2", text:"The suspect's height is 180cm. Find its digital root (keep summing the digits until one digit remains)."},
+        {tag:"Clue 3", text:"A chessboard has 32 squares of one color. Take the tens digit of that number."}
+      ],
+      code:"393"
+    }
+  ];
+
+  const tabsEl = document.getElementById('tabs');
+  const introEl = document.getElementById('intro');
+  const stageEl = document.getElementById('stage');
+  const completeEl = document.getElementById('complete');
+  const startBtn = document.getElementById('startBtn');
+  const caseCard = document.getElementById('caseCard');
+  const caseTitle = document.getElementById('caseTitle');
+  const caseRank = document.getElementById('caseRank');
+  const caseNumber = document.getElementById('caseNumber');
+  const caseNote = document.getElementById('caseNote');
+  const cluesEl = document.getElementById('clues');
+  const digitInputs = Array.from(document.querySelectorAll('.digit'));
+  const submitBtn = document.getElementById('submitBtn');
+  const feedbackEl = document.getElementById('feedback');
+  const stageActions = document.getElementById('stageActions');
+  const nextBtn = document.getElementById('nextBtn');
+  const retryActions = document.getElementById('retryActions');
+  const retryBtn = document.getElementById('retryBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const closedStamps = document.getElementById('closedStamps');
+  const timerClock = document.getElementById('timerClock');
+
+  const TIME_LIMIT = 60;
+  let current = 0;
+  const solved = new Set();
+  let timeLeft = TIME_LIMIT;
+  let timerId = null;
+
+  function formatTime(sec){
+    const m = Math.floor(sec / 60).toString().padStart(2,'0');
+    const s = (sec % 60).toString().padStart(2,'0');
+    return m + ':' + s;
+  }
+
+  function stopTimer(){
+    if (timerId){ clearInterval(timerId); timerId = null; }
+  }
+
+  function startTimer(){
+    stopTimer();
+    timeLeft = TIME_LIMIT;
+    timerClock.textContent = formatTime(timeLeft);
+    timerClock.classList.remove('low','stopped');
+    timerId = setInterval(() => {
+      timeLeft -= 1;
+      timerClock.textContent = formatTime(timeLeft);
+      if (timeLeft <= 10 && timeLeft > 0) timerClock.classList.add('low');
+      if (timeLeft <= 0){
+        stopTimer();
+        timerClock.classList.remove('low');
+        timerClock.textContent = '00:00';
+        handleTimeout();
+      }
+    }, 1000);
+  }
+
+  function handleTimeout(){
+    digitInputs.forEach(i => { i.disabled = true; i.value=''; });
+    submitBtn.style.display = 'none';
+    feedbackEl.textContent = "TIME'S UP — CASE FILE RESEALED.";
+    feedbackEl.className = 'feedback denied';
+    retryActions.style.display = 'block';
+    caseCard.classList.remove('shake');
+    void caseCard.offsetWidth;
+    caseCard.classList.add('shake');
+  }
+
+  function renderTabs(){
+    tabsEl.innerHTML = '';
+    stages.forEach((s, i) => {
+      const t = document.createElement('div');
+      let cls = 'tab';
+      if (solved.has(i)) cls += ' solved';
+      else if (i === current && stageEl.classList.contains('hidden') === false) cls += ' current';
+      else if (i > current) cls += ' locked';
+      t.className = cls;
+      t.innerHTML = '<span class="n">' + String(i+1).padStart(2,'0') + '</span>' + (solved.has(i) ? 'CLOSED' : 'OPEN');
+      tabsEl.appendChild(t);
+    });
+  }
+
+  function showScreen(el){
+    [introEl, stageEl, completeEl].forEach(s => s.classList.add('hidden'));
+    el.classList.remove('hidden');
+  }
+
+  function loadStage(i){
+    const s = stages[i];
+    caseTitle.textContent = s.title;
+    caseRank.textContent = s.rank;
+    caseNumber.textContent = 'CASE ' + String(i+1).padStart(2,'0');
+    caseNote.textContent = s.note;
+    cluesEl.innerHTML = '';
+    s.clues.forEach((c, idx) => {
+      const div = document.createElement('div');
+      div.className = 'clue';
+      div.innerHTML = '<div class="clue-index">' + String.fromCharCode(65+idx) + '</div>' +
+        '<div class="clue-text"><span class="tag">' + c.tag + '</span>' + c.text + '</div>';
+      cluesEl.appendChild(div);
+    });
+    digitInputs.forEach(inp => { inp.value=''; inp.disabled=false; });
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+    submitBtn.disabled = false;
+    submitBtn.style.display = '';
+    stageActions.style.display = 'none';
+    retryActions.style.display = 'none';
+    caseCard.classList.remove('shake');
+    showScreen(stageEl);
+    renderTabs();
+    startTimer();
+    setTimeout(() => digitInputs[0].focus(), 50);
+  }
+
+  digitInputs.forEach((inp, idx) => {
+    inp.addEventListener('input', () => {
+      inp.value = inp.value.replace(/[^0-9]/g,'').slice(0,1);
+      if (inp.value && idx < digitInputs.length - 1) digitInputs[idx+1].focus();
+    });
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !inp.value && idx > 0) digitInputs[idx-1].focus();
+      if (e.key === 'Enter') submitBtn.click();
+    });
+  });
+
+  startBtn.addEventListener('click', () => loadStage(0));
+
+  submitBtn.addEventListener('click', () => {
+    const guess = digitInputs.map(i => i.value).join('');
+    if (guess.length < 3){
+      feedbackEl.textContent = 'ENTER ALL THREE DIGITS.';
+      feedbackEl.className = 'feedback denied';
+      return;
+    }
+    const s = stages[current];
+    if (guess === s.code){
+      solved.add(current);
+      stopTimer();
+      timerClock.classList.remove('low');
+      timerClock.classList.add('stopped');
+      feedbackEl.textContent = '';
+      digitInputs.forEach(i => i.disabled = true);
+      submitBtn.style.display = 'none';
+      const stamp = document.createElement('div');
+      stamp.className = 'stamp-result';
+      stamp.textContent = 'ACCESS GRANTED';
+      stamp.id = 'grantedStamp';
+      document.querySelector('.lock').insertBefore(stamp, stageActions);
+      requestAnimationFrame(() => stamp.classList.add('show'));
+      stageActions.style.display = 'block';
+      nextBtn.textContent = (current === stages.length - 1) ? 'Close out the investigation →' : 'Proceed to next case →';
+      renderTabs();
+    } else {
+      feedbackEl.textContent = 'ACCESS DENIED — RECHECK YOUR WORKING.';
+      feedbackEl.className = 'feedback denied';
+      caseCard.classList.remove('shake');
+      void caseCard.offsetWidth;
+      caseCard.classList.add('shake');
+      digitInputs.forEach(i => i.value = '');
+      digitInputs[0].focus();
+    }
+  });
+
+  retryBtn.addEventListener('click', () => {
+    loadStage(current);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    const stamp = document.getElementById('grantedStamp');
+    if (stamp) stamp.remove();
+    if (current === stages.length - 1){
+      closedStamps.innerHTML = stages.map((s,i) => '<span>CASE ' + String(i+1).padStart(2,'0') + ' — CLOSED</span>').join('');
+      showScreen(completeEl);
+    } else {
+      current += 1;
+      loadStage(current);
+    }
+  });
+
+  restartBtn.addEventListener('click', () => {
+    stopTimer();
+    current = 0;
+    solved.clear();
+    showScreen(introEl);
+    renderTabs();
+  });
+
+  renderTabs();
+})();
+</script>
+
+</body>
+</html>

@@ -404,6 +404,10 @@
   .stamp-result.show{
     animation:stampIn 0.35s ease forwards;
   }
+  .stamp-result.denied{
+    border-color:var(--red);
+    color:var(--red);
+  }
   @keyframes stampIn{
     0%{opacity:0; transform:rotate(-4deg) scale(1.6);}
     100%{opacity:1; transform:rotate(-4deg) scale(1);}
@@ -500,7 +504,7 @@
           <button class="btn-ghost" id="nextBtn">Proceed to next case →</button>
         </div>
         <div class="stage-actions" id="retryActions" style="display:none;">
-          <button class="btn-ghost" id="retryBtn">Reopen case file ↻</button>
+          <button class="btn-ghost" id="retryBtn">Return to Case Menu ↻</button>
         </div>
       </div>
     </div>
@@ -638,6 +642,14 @@
     submitBtn.style.display = 'none';
     feedbackEl.textContent = "TIME'S UP — CASE FILE RESEALED.";
     feedbackEl.className = 'feedback denied';
+    const oldStamp = document.getElementById('grantedStamp');
+    if (oldStamp) oldStamp.remove();
+    const stamp = document.createElement('div');
+    stamp.className = 'stamp-result denied';
+    stamp.textContent = 'CASE FAILED';
+    stamp.id = 'grantedStamp';
+    document.querySelector('.lock').insertBefore(stamp, retryActions);
+    requestAnimationFrame(() => stamp.classList.add('show'));
     retryActions.style.display = 'block';
     caseCard.classList.remove('shake');
     void caseCard.offsetWidth;
@@ -741,7 +753,13 @@
   });
 
   retryBtn.addEventListener('click', () => {
-    loadStage(current);
+    const stamp = document.getElementById('grantedStamp');
+    if (stamp) stamp.remove();
+    stopTimer();
+    current = 0;
+    solved.clear();
+    showScreen(introEl);
+    renderTabs();
   });
 
   nextBtn.addEventListener('click', () => {

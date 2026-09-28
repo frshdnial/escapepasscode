@@ -1,4 +1,4 @@
-# Escape the Passcode — PERSAKA 26/27 (Detective Arcade edition)
+# PERSAKA 26/27 · Escape the Passcode (Detective Arcade edition)
 
 A timed puzzle game with a detective arcade look. Five sealed case files sit on your desk. Each one hides a
 3-digit vault combination behind three clues, and you have 60 seconds to crack it. Finish all five to close

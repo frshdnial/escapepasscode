@@ -13,7 +13,10 @@
   "suggest": { "ext-pdo_sqlite": "Needed only for composer test" },
   "autoload": { "psr-4": { "App\\": "src/" } },
   "scripts": {
-    "start": "php -S localhost:8000 -t public",
+    "start": [
+      "Composer\\Config::disableProcessTimeout",
+      "php -S localhost:8000 -t public"
+    ],
     "test": "php tests/GameServiceTest.php"
   },
   "config": { "sort-packages": true }

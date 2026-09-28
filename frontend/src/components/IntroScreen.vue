@@ -13,6 +13,17 @@ function go() { if (ready.value) begin(name.value) }
 
 <template>
   <section class="intro">
+    <div v-if="state.config" class="panel rules-panel">
+      <h2 class="h">How to play</h2>
+      <ul class="rules">
+        <li>Every case hides a 3-digit combination. Each of its 3 clues resolves to one digit.</li>
+        <li>You get {{ state.config.timeLimitSeconds }} seconds and {{ state.config.maxAttempts }} tries per case.</li>
+        <li>Faster solves with fewer wrong tries score more. Later cases are worth more.</li>
+        <li>Run out of time or tries and the run ends. Your score so far still goes on the board.</li>
+      </ul>
+    </div>
+    <div v-else class="panel rules-panel"></div>
+
     <div class="panel hero">
       <img class="hero-logo" :src="LOGO" alt="PERSAKA logo">
       <h1 class="title">ESCAPE THE<br>PASSCODE</h1>
@@ -33,21 +44,10 @@ function go() { if (ready.value) begin(name.value) }
       <button class="btn" :disabled="!ready" @click="go">{{ state.busy ? 'Opening file…' : 'Start case 01' }}</button>
     </div>
 
-    <div class="side">
-      <div v-if="state.config" class="panel">
-        <h2 class="h">How to play</h2>
-        <ul class="rules">
-          <li>Every case hides a 3-digit combination. Each of its 3 clues resolves to one digit.</li>
-          <li>You get {{ state.config.timeLimitSeconds }} seconds and {{ state.config.maxAttempts }} tries per case.</li>
-          <li>Faster solves with fewer wrong tries score more. Later cases are worth more.</li>
-          <li>Run out of time or tries and the run ends. Your score so far still goes on the board.</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <h2 class="h">Top detectives</h2>
-        <LeaderboardTable :limit="5" compact />
-        <p><button class="btn ghost sm" @click="openBoard">Full board</button></p>
-      </div>
+    <div class="panel top-panel">
+      <h2 class="h">Top detectives</h2>
+      <LeaderboardTable :limit="5" compact />
+      <p><button class="btn ghost sm" @click="openBoard">Full board</button></p>
     </div>
   </section>
 </template>

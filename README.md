@@ -4,8 +4,9 @@ A timed puzzle game with a detective arcade look. Five sealed case files sit on 
 3-digit vault combination behind three clues, and you have 60 seconds to crack it. Finish all five to close
 the investigation, then see where your score lands on the leaderboard.
 
-Built with **Vue 3 (Vite)** for the game, **PHP Slim 4** for the API, and **MySQL/MariaDB** (Laragon + HeidiSQL) for the leaderboard.
-The original single-file version is kept in `legacy/escape-the-passcode.html`.
+- **Frontend:** Vue 3 + Vite
+- **Backend:** PHP 8.1+ with Slim 4
+- **Database:** MySQL / MariaDB (Laragon + HeidiSQL)
 
 ---
 

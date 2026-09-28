@@ -1,0 +1,6 @@
+backend/vendor/
+backend/.env
+backend/var/*.sqlite*
+frontend/node_modules/
+frontend/dist/
+.DS_Store

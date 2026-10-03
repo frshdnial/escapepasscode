@@ -1,15 +1,16 @@
-# Escape the Passcode — PERSAKA 26/27 (Detective Arcade edition)
+# PERSAKA 26/27 · Escape the Passcode (Detective Arcade edition)
 
 A timed puzzle game with a detective arcade look. Five sealed case files sit on your desk. Each one hides a
 3-digit vault combination behind three clues, and you have 60 seconds to crack it. Finish all five to close
 the investigation, then see where your score lands on the leaderboard.
 
-Built with **Vue 3 (Vite)** for the game, **PHP Slim 4** for the API, and **MySQL/MariaDB** (Laragon + HeidiSQL) for the leaderboard.
-The original single-file version is kept in `legacy/escape-the-passcode.html`.
+- **Frontend:** Vue 3 + Vite
+- **Backend:** PHP 8.1+ with Slim 4
+- **Database:** MySQL / MariaDB (Laragon + HeidiSQL)
 
 ---
 
-## About the game
+## 1. About the game
 
 ### How to play
 
@@ -28,7 +29,7 @@ The original single-file version is kept in `legacy/escape-the-passcode.html`.
 
 ---
 
-## Score calculation
+## 2. Score calculation
 
 The server works out the score, not the browser, so it cannot be edited from the dev tools.
 
@@ -83,25 +84,33 @@ with a ✓ when all five were.
 
 ---
 
-## Project structure
+## 3. Project structure
 
 ```
-backend/     PHP Slim 4 API (answers, timer, scoring, leaderboard)
-  config/game.php        Cases, clues, answers, time limit, tries per case
-  database/schema.sql    MySQL table (run once in HeidiSQL)
-  public/index.php       Slim app and routes
-  src/GameService.php    All game rules and scoring
-  tests/                 Rule checks (run with composer test)
-frontend/    Vue 3 app (arcade UI, sound, leaderboard)
-  src/game.js            Game state and timer
-  src/components/        Screens and leaderboard table
-  public/persaka-logo.png
-legacy/      The original single-file game
+escapepasscode/
+├── frontend/   Vue 3 game (Detective Arcade theme, PERSAKA logo)
+│   ├── src/
+│   │   ├── components/   Start screen, case stage, results, leaderboard table
+│   │   ├── game.js       Game state, countdown timer and actions
+│   │   ├── api.js        Calls to the backend
+│   │   ├── sound.js      Arcade sound effects (no audio files)
+│   │   ├── format.js     Score and time formatting
+│   │   └── style.css     Arcade theme
+│   ├── public/persaka-logo.png
+│   └── vite.config.js
+├── backend/    Slim 4 REST API
+│   ├── public/index.php      Routes
+│   ├── src/                  Database, game rules and scoring, controller, CORS
+│   ├── config/game.php       Cases, clues, answers, time limit, tries
+│   ├── database/schema.sql   MySQL table (run once in HeidiSQL)
+│   ├── tests/                Rule checks (composer test)
+│   └── .env                  Your local database login (optional, not committed)
+└── legacy/     Original single-file game
 ```
 
 ---
 
-## Run it locally
+## 4. Run it locally
 
 ### Requirements
 
@@ -164,7 +173,7 @@ composer test
 
 The tests use a temporary in-memory SQLite database (needs `pdo_sqlite`), so they never touch your MySQL data.
 
-### Troubleshooting
+## 5. Troubleshooting
 
 | Message or symptom | What to check |
 |---|---|
@@ -175,7 +184,7 @@ The tests use a temporary in-memory SQLite database (needs `pdo_sqlite`), so the
 
 ---
 
-## Customising
+## 6. Customizing
 
 - **Cases, clues, answers, time limit, tries per case:** `backend/config/game.php`. The answers stay on the server.
 - **Scoring formula:** `GameService::guess()` in `backend/src/GameService.php`.
@@ -183,7 +192,7 @@ The tests use a temporary in-memory SQLite database (needs `pdo_sqlite`), so the
   The API caps a request at 50 in `ApiController.php`.
 - **Colours and fonts:** the variables at the top of `frontend/src/style.css`.
 
-## API reference
+## 7. API reference
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -194,7 +203,7 @@ The tests use a temporary in-memory SQLite database (needs `pdo_sqlite`), so the
 | POST | `/api/runs/{id}/timeout` | Client reports its countdown hit zero; the server verifies |
 | GET  | `/api/leaderboard?limit=10&run={id}` | Ranked entries, plus the caller's own row |
 
-## Production notes
+## 8. Production notes
 
 - Build the game with `npm run build` and serve `frontend/dist/`. Route `/api/*` to `backend/public/index.php`
   (Apache uses the included `.htaccess`; nginx needs `try_files $uri /index.php$is_args$args;`).
